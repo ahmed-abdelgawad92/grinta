@@ -1,0 +1,43 @@
+.table-logo{
+   width: 70px;
+   height: 50px;
+}
+
+.busy{
+   background-color: rgba(129, 143, 195, 0.67) !important;
+}
+
+#loading, .loading{
+   text-align: center;
+   margin-top: 20px;
+   display: none;
+}
+
+#loading img, .loading img{
+   width: 200px;
+   height: 150px;
+   border-radius: 50%;
+}
+.delete-order{
+   color:red;
+   cursor: pointer;
+}
+
+#ps_input{
+   display: none;
+}
+
+#ui-datepicker-div{
+   z-index: 100 !important;
+}
+
+@media (min-width: 1200px){
+   .modal-xl {
+      max-width: 90%;
+   }
+}
+@media (min-width: 992px){
+   .modal-xl {
+      max-width: 90%;
+   }
+}
