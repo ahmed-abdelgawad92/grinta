@@ -150,6 +150,7 @@ class OrderController extends Controller
         $newReservation = new Reservation;
         $newReservation->order_id = $reservation->order_id;
         $newReservation->time_from = $time_to;
+        $newReservation->price = $reservation->price;
         $newReservation->multi = ! $multi;
         $newReservation->save();
 
