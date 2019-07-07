@@ -102,8 +102,7 @@ class OrderController extends Controller
         foreach($reservations as $reservation){
             $from = strtotime($reservation->time_from);
             $to   = $reservation->time_to ? strtotime($reservation->time_to) : strtotime($time_to);
-            $price = $reservation->multi ? $reservation->multi_price : $reservation->price;
-            $price = round((($to - $from) / 3600) * $price);
+            $price = round((($to - $from) / 3600) * $reservation->price);
             
             $total += $price;
             if(!$reservation->time_to){
