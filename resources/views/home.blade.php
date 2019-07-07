@@ -6,7 +6,7 @@
     @include('shared.success')
     @include('shared.error')
     <div class="row">
-        @if($tables)
+        @if(count($tables) > 0)
         @foreach ($tables as $table)
             <div class="col-6 col-md-4">
                 <div class="card @if($table->state == 'busy') busy @endif mb-3">
