@@ -43,7 +43,7 @@
             </div>
         @endforeach
         @else 
-            <div class="alert alert-warning">There is no tables created</div>
+            <div class="alert alert-warning col-12">There is no tables created</div>
         @endif
     </div>
     @include('order.add_to_order',['drinks' => $drinks, 'meals' => $meals])
