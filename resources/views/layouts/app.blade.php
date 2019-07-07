@@ -99,8 +99,8 @@
                             <a href="{{route('allDrink')}}" class="list-group-item list-group-item-action @if($active == 'drink') active @endif">Drinks</a>
                             <a href="{{route('createDrink')}}" class="list-group-item list-group-item-action @if($active == 'createDrink') active @endif">Add new drink</a>
                             <a href="{{route('dailyReport')}}" class="list-group-item list-group-item-action @if($active == 'dailyReport') active @endif">Daily Report</a>
-                            <a href="#" class="list-group-item list-group-item-action @if($active == 'store') active @endif">Store</a>
-                            <a href="#" class="list-group-item list-group-item-action @if($active == 'createStore') active @endif">Add materials to the store</a>
+                            <a href="#" class="disabled list-group-item list-group-item-action @if($active == 'store') active @endif">Store</a>
+                            <a href="#" class="disabled list-group-item list-group-item-action @if($active == 'createStore') active @endif">Add materials to the store</a>
                             <a href="{{route('allUser')}}" class="list-group-item list-group-item-action @if($active == 'user') active @endif">Users</a>
                             <a href="{{route('createUser')}}" class="list-group-item list-group-item-action @if($active == 'createUser') active @endif">Add new user</a>
                         </div>
