@@ -133,4 +133,9 @@ $(document).ready(function () {
          }
       });
    });
+
+   //delete order 
+   $('.delete-order-entry').click(function(){
+      $('#delete-order-form').attr('action', '/orders/delete/' + $(this).attr('data-id'));
+   });
 });

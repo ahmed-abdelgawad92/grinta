@@ -8,6 +8,7 @@ use App\OrderItem;
 use App\Table;
 use App\Reservation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -52,6 +53,7 @@ class OrderController extends Controller
             
             $order = new Order;
             $order->table_id = $id;
+            $order->user_id = Auth::user()->id;
             $saved = $order->save();
     
             if($table->type == 'ps'){
@@ -77,7 +79,7 @@ class OrderController extends Controller
         $reservations = Reservation::checkout($id);
         $total = OrderItem::total($id)[0]->total;
         if(!$reservations && !$orders){
-            return redirect()->back()->with(['error' => 'There are no orders or reservations yet to checkout!']);
+            return redirect()->route('home')->with(['error' => 'There are no orders or reservations yet to checkout!']);
         }
         return view('order.checkout',[
             'orders' => $orders,
@@ -113,19 +115,12 @@ class OrderController extends Controller
         }
 
         if($request->discount){
-            $total_before = $total;
-            if($request->discount_type == 'percent' && $request->discount < 100){
-                $discount = $total * ($request->discount/100);
-                $total -= $discount;
-            }else{
-                $total -= $request->discount;
-            }
+            $total -= $request->discount;
             $order->discount = $request->discount;
-            $order->discount_type = $request->discount_type;
-            $order->total_before = $total_before;
         }
         $order->closed = 1;
         $order->total = $total;
+        $order->user_id = Auth::user()->id;
         $order->save();
 
         $table = $order->table;
@@ -163,8 +158,10 @@ class OrderController extends Controller
      * @param  \App\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy($id)
     {
-        //
+        $order = Order::findOrFail($id);
+        $order->delete();
+        return redirect()->back()->with(['success'=>'The order #'. $order->id .' is successfully deleted']);
     }
 }

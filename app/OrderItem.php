@@ -12,7 +12,7 @@ class OrderItem extends Model
     public static function checkout($order_id)
     {
         return DB::select( '
-            SELECT name, meals.price AS price, SUM(amount) AS amount, SUM(meals.price * amount) AS total FROM order_item 
+            SELECT order_item.id AS id, name, meals.price AS price, SUM(amount) AS amount, SUM(meals.price * amount) AS total FROM order_item 
             LEFT JOIN meals on meals.id = order_item.meal_id
             WHERE 
                 order_id = :id
@@ -23,7 +23,7 @@ class OrderItem extends Model
             GROUP BY 
                 order_item.drink_id
             UNION 
-            SELECT name, drinks.price AS price, SUM(amount) AS amount, SUM(drinks.price * amount) AS total FROM order_item
+            SELECT order_item.id AS id, name, drinks.price AS price, SUM(amount) AS amount, SUM(drinks.price * amount) AS total FROM order_item
             LEFT JOIN drinks on drinks.id = order_item.drink_id
             WHERE 
                 order_id = :oid
@@ -41,6 +41,11 @@ class OrderItem extends Model
     public static function total($id)
     {
         return DB::select('SELECT SUM(price * amount) AS total FROM order_item WHERE order_id = :id AND canceled = 0', ['id' => $id]);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo('App\Order');
     }
 
     public function drink()

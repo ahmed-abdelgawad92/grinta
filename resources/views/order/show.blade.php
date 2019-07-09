@@ -61,7 +61,7 @@
                @if($currentOrder->discount)
                <tr>
                   <th colspan="3">Total before discount</th>
-                  <th colspan="1">{{$currentOrder->total_before}} LE</th>
+                  <th colspan="1">{{$currentOrder->total - $currentOrder->discount}} LE</th>
                </tr>
                @endif
                <tr>

@@ -178,6 +178,11 @@ Route::group(['prefix' => 'orders'], function () {
         'uses' => 'OrderController@pay',
         'as'   => 'pay'
     ])->where('id','[0-9]+');
+    //delete order
+    Route::delete('/delete/{id}', [
+        'uses' => 'OrderController@destroy',
+        'as'   => 'deleteOrder'
+    ])->where('id','[0-9]+');
 
     //order items routes 
     Route::group(['prefix' => 'item'], function () {
@@ -191,6 +196,11 @@ Route::group(['prefix' => 'orders'], function () {
             'uses' => 'OrderController@show',
             'as'   => 'showOrderItem'
         ]);
+        //delete order item
+        Route::delete('/delete/{id}', [
+            'uses' => 'OrderItemController@destroy',
+            'as'   => 'deleteOrder'
+        ])->where('id', '[0-9]+');
     });
 });
 //order items routes 

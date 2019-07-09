@@ -109,8 +109,27 @@ class OrderItemController extends Controller
      * @param  \App\OrderItem  $orderItem
      * @return \Illuminate\Http\Response
      */
-    public function destroy(OrderItem $orderItem)
+    public function destroy($id)
     {
-        //
+        $orderItem = OrderItem::findOrFail($id);
+        $order = $orderItem->order;
+        if($order->closed){
+            return redirect()->back()->with(['error' => "You can't remove an item from a closed order"]);
+        }else{
+            $orderItem->delete();
+            $name = $orderItem->drink->name ?? $orderItem->meal->name;
+
+            $reservations = $order->reservations;
+            $orderItems = $order->orderItem;
+
+            if(count($reservations) == 0 && count($orderItems) == 0){
+                $table = $order->table;
+                $table->state = "free";
+                $table->save();
+                $order->delete();
+                return redirect()->route('home')->with(['success' => 'The item "' . $name . '" is successfully removed from the order']);
+            }
+            return redirect()->back()->with(['success' => 'The item "' . $name . '" is successfully removed from the order']);
+        }
     }
 }

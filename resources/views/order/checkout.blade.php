@@ -18,6 +18,7 @@
                   <th>amount</th>
                   <th>price</th>
                   <th>total</th>
+                  <th>action</th>
                </tr>
             </thead>
             <tbody>
@@ -27,6 +28,11 @@
                   <td>{{$order->amount}}</td>
                   <td>{{$order->price}}</td>
                   <td>{{$order->total}}</td>
+                  @if(Auth::user()->admin)
+                  <td>
+                     <button type="button" class="btn btn-danger delete-order-item" data-id="{{$order->id}}" data-toggle="modal" data-target="#delete-order-item">&#9003;</button>
+                  </td>
+                  @endif
                </tr>    
                @endforeach
             </tbody>
@@ -38,6 +44,9 @@
                   <th>from</th>
                   <th>to</th>
                   <th>price</th>
+                  @if(Auth::user()->admin)
+                  <th></th>
+                  @endif
                </tr>
             </thead>
             <tbody>
@@ -72,6 +81,9 @@
                      @endphp
                      {{$price}}
                   </td>
+                  @if(Auth::user()->admin)
+                  <td></td>
+                  @endif
                </tr>    
                @endforeach
             </tbody>
@@ -80,24 +92,17 @@
                <tr>
                   <th colspan="3">Total</th>
                   <th class="total-price" data-total-new="{{$total}}" data-total="{{$total}}" colspan="1">{{$total}} LE</th>
+                  @if(Auth::user()->admin)
+                  <th></th>
+                  @endif
                </tr>
             </tfoot>
          </table>
       </div>
-      @if(auth()->user()->admin)
       <div class="form-group">
          <label>Discount</label>
-         <div class="input-group">
-            <input class="form-control" name="discount" type="text" placeholder="enter discount">
-            <div class="input-group-append">
-               <select name="discount_type" class="form-control">
-                  <option value="percent">Percent %</option>
-                  <option value="amount">Amount</option>
-               </select>
-            </div>
-         </div>
+         <input class="form-control" name="discount" type="text" placeholder="enter discount">
       </div>
-      @endif
       <div>
          <p>Calculate the rest</p>
          <input type="text" class="form-control" id="paid" placeholder="Enter amount the client has paid">
@@ -124,6 +129,26 @@
          <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
             <button type="button" id="payNow" class="btn btn-success">pay</button>
+         </div>
+      </div>
+   </div>
+</div>
+<div id="delete-order-item" class="modal fade" tabindex="-1" role="dialog">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title">Are you sure you want to remove this item?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-footer">
+            <form action="" method="POST" id="delete-order-item-form">
+               @csrf 
+               @method('DELETE')
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+               <button type="submit" class="btn btn-danger">delete</button>
+            </form>
          </div>
       </div>
    </div>
