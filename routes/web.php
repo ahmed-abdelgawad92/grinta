@@ -203,6 +203,7 @@ Route::group(['prefix' => 'orders'], function () {
         ])->where('id', '[0-9]+');
     });
 });
+
 //order items routes 
 Route::group(['prefix' => 'report'], function () {
     //add a new order item

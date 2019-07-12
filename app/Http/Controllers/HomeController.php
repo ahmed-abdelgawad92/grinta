@@ -52,7 +52,8 @@ class HomeController extends Controller
         return view('order.dailyReport',[
             'orders' => $orders,
             'date' => $date,
-            'total' => $total
+            'total' => $total,
+            'active' => 'dailyReport'
         ]);
     }
 

@@ -11,7 +11,8 @@ class OrderItem extends Model
 
     public static function checkout($order_id)
     {
-        return DB::select( '
+        return DB::select(
+            '
             SELECT order_item.id AS id, name, meals.price AS price, SUM(amount) AS amount, SUM(meals.price * amount) AS total FROM order_item 
             LEFT JOIN meals on meals.id = order_item.meal_id
             WHERE 
@@ -19,9 +20,11 @@ class OrderItem extends Model
             AND 
                 order_item.meal_id IS NOT NULL
             AND 
+                order_item.drink_id IS NULL
+            AND 
                 order_item.canceled = 0
             GROUP BY 
-                order_item.drink_id
+                order_item.meal_id
             UNION 
             SELECT order_item.id AS id, name, drinks.price AS price, SUM(amount) AS amount, SUM(drinks.price * amount) AS total FROM order_item
             LEFT JOIN drinks on drinks.id = order_item.drink_id
@@ -29,6 +32,8 @@ class OrderItem extends Model
                 order_id = :oid
             AND 
                 order_item.drink_id IS NOT NULL
+            AND 
+                order_item.meal_id IS NULL
             AND 
                 order_item.canceled = 0
             GROUP BY 

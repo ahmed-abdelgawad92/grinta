@@ -81,13 +81,15 @@ class OrderController extends Controller
         if(!$reservations && !$orders){
             return redirect()->route('home')->with(['error' => 'There are no orders or reservations yet to checkout!']);
         }
-        return view('order.checkout',[
+        $data = [
             'orders' => $orders,
             'reservations' => $reservations,
             'total' => $total,
-            'table' => $table ,
+            'table' => $table,
             'id' => $id
-        ]);
+        ];
+        // dd($data);
+        return view('order.checkout', $data);
 
     }
 
