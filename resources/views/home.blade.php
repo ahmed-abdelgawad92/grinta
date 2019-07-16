@@ -5,11 +5,27 @@
 <div class="card-body">
     @include('shared.success')
     @include('shared.error')
+    <div class="alert alert-info alert-dismissible fade show" id="hint">
+        <p id="info" style="font-size:16px;"></p>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
     <div class="row">
         @if(count($tables) > 0)
         @foreach ($tables as $table)
             <div class="col-6 col-md-4">
-                <div class="card @if($table->state == 'busy') busy @endif mb-3">
+                <div class="card mb-3 
+                    @if($table->state == 'busy' && $table->type == 'ps' && strtotime($table->reservations->last()->time_to) < strtotime(date('Y-m-d H:i:s'))) 
+                    bg-secondary
+                    @elseif($table->state == 'busy')
+                    busy 
+                    @endif" 
+                    @if($table->state == 'busy' && $table->type == 'ps' && $table->reservations->last()->time_to != '0000-00-00 00:00:00')
+                        data-busy-table="{{$table->name}}"
+                        data-time-to="{{strtotime($table->reservations->last()->time_to)}}"
+                        data-now="{{time()}}"
+                    @endif>
                     <div class="card-body text-center">
                         @if($table->type == 'ps')
                         <img src="{{asset('images/ps.png')}}" alt="ps" class="table-logo">

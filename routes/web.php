@@ -204,12 +204,39 @@ Route::group(['prefix' => 'orders'], function () {
     });
 });
 
-//order items routes 
+//report routes 
 Route::group(['prefix' => 'report'], function () {
-    //add a new order item
+    //get daily report
     Route::get('/daily', [
         'uses' => 'HomeController@dailyReport',
         'as'   => 'dailyReport'
     ]);
+    //get user report
+    Route::get('/user', [
+        'uses' => 'HomeController@userReport',
+        'as'   => 'userReport'
+    ]);
 });
 
+//expenses routes 
+Route::group(['prefix' => 'expenses'], function () {
+    //get all expenses
+    Route::get('/all', [
+        'uses' => 'ExpenseController@index',
+        'as'   => 'allExpense'
+    ]);
+    //add a new Expense
+    Route::get('/create', [
+        'uses' => 'ExpenseController@create',
+        'as'   => 'createExpense'
+    ]);
+    Route::post('/create', [
+        'uses' => 'ExpenseController@store',
+        'as'   => 'createExpense'
+    ]);
+    //delete Expense
+    Route::delete('/delete/{id}', [
+        'uses' => 'ExpenseController@destroy',
+        'as'   => 'deleteExpense'
+    ])->where('id', '[0-9]+');
+});

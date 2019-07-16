@@ -33,7 +33,7 @@ $(document).ready(function () {
    $('#order').hide();
 
    //add item to the order
-   $('.add-order-item').click(function(){
+   $('.add-order-item').dblclick(function(){
       if ($('#order').is(":hidden")){
          $('#order').show();
       }
@@ -138,4 +138,31 @@ $(document).ready(function () {
    $('.delete-order-entry').click(function(){
       $('#delete-order-form').attr('action', '/orders/delete/' + $(this).attr('data-id'));
    });
+
+   //user report 
+   $('.datetimepicker').datetimepicker({
+      format: 'Y-m-d H:i',
+      step: 10
+   }).attr('readonly', 'readonly');
+
+   //calculate time 
+   $('[data-busy-table]').each(function(i, el){
+      var time = el.getAttribute('data-now');
+      var time_to = el.getAttribute('data-time-to');
+      var time_diff = (time_to - time) * 1000;
+      
+      var element = el;
+      if(time_diff > 0){
+         setTimeout(function(){
+            $('#hint').hide();
+            $(element).removeClass('busy');
+            $(element).addClass('bg-secondary');
+            var table = $(element).attr('data-busy-table');
+            $('#info').html(`The reservation on table "${table}" is already over`);
+            $('#hint').show();
+         }, time_diff);
+      }
+   });
+   
+   $('#hint').hide();
 });

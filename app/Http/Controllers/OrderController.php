@@ -48,21 +48,28 @@ class OrderController extends Controller
         try{
             DB::beginTransaction();
             $table = Table::findOrFail($id);
+            if($table == 'busy' || $table->hasUnclosedOrders() > 0){
+                return redirect()->back()->with('error','This table has unclosed orders !');
+            }
             $table->state = 'busy';
-            $saved = $table->save();
+            $table->save();
             
             $order = new Order;
             $order->table_id = $id;
             $order->user_id = Auth::user()->id;
-            $saved = $order->save();
+            $order->save();
     
             if($table->type == 'ps'){
+                $now = date("Y-m-d H:i:s");
                 $reservation = new Reservation;
-                $reservation->time_from = now();
+                $reservation->time_from = $now;
                 $reservation->multi = $request->multi;
                 $reservation->price = $reservation->multi ? $table->ps_multi_price : $table->ps_price;
+                if(!empty($request->hours)){
+                    $reservation->time_to = date('Y-m-d H:i:s', strtotime($now . ' +'. $request->hours . ' hours'));
+                }
                 $reservation->order_id = $order->id;
-                $saved = $reservation->save();
+                $reservation->save();
             }
             DB::commit();
         }catch(Exception $e){
@@ -74,7 +81,11 @@ class OrderController extends Controller
 
     public function checkout($id)
     {
-        $table = Order::find($id)->table;
+        $order = Order::find($id);
+        if($order->closed){
+            return redirect()->route('home')->with('error','This order is already closed!');
+        }
+        $table = $order->table;
         $orders = OrderItem::checkout($id);
         $reservations = Reservation::checkout($id);
         $total = OrderItem::total($id)[0]->total;
@@ -96,38 +107,44 @@ class OrderController extends Controller
     public function pay(Request $request, $id)
     {
         $session = $request->session()->all();
-
-        $order = Order::findOrFail($id);
-        $request->validate(['discount' => 'nullable|numeric']);
-        $time_to      = $session['order' . $id];
-        $total        = OrderItem::total($id)[0]->total;
-        $reservations = Reservation::checkout($id);
-        
-        foreach($reservations as $reservation){
-            $from = strtotime($reservation->time_from);
-            $to   = $reservation->time_to ? strtotime($reservation->time_to) : strtotime($time_to);
-            $price = round((($to - $from) / 3600) * $reservation->price);
+        try{
+            DB::beginTransaction();
+            $order = Order::findOrFail($id);
+            $request->validate(['discount' => 'nullable|numeric']);
+            $time_to      = $session['order' . $id];
+            $request->session()->forget('order' . $id);
+            $total        = OrderItem::total($id)[0]->total;
+            $reservations = Reservation::checkout($id);
             
-            $total += $price;
-            if(!$reservation->time_to){
-                $res = Reservation::findOrFail($reservation->id);
-                $res->time_to = $time_to;
-                $res->save();
+            foreach($reservations as $reservation){
+                $from = strtotime($reservation->time_from);
+                $to   = $reservation->time_to ? strtotime($reservation->time_to) : strtotime($time_to);
+                $price = round((($to - $from) / 3600) * $reservation->price);
+                
+                $total += $price;
+                if(!$reservation->time_to){
+                    $res = Reservation::findOrFail($reservation->id);
+                    $res->time_to = $time_to;
+                    $res->save();
+                }
             }
+    
+            if($request->discount){
+                $order->discount = $request->discount;
+            }
+            $order->closed = 1;
+            $order->total = $total;
+            $order->user_id = Auth::user()->id;
+            $order->save();
+    
+            $table = $order->table;
+            $table->state = 'free';
+            $table->save();
+            DB::commit();
+        }catch (Exception $e){
+            DB::rollback();
+            return redirect()->back()->with('error', 'Something went wrong on the server please try again!');
         }
-
-        if($request->discount){
-            $total -= $request->discount;
-            $order->discount = $request->discount;
-        }
-        $order->closed = 1;
-        $order->total = $total;
-        $order->user_id = Auth::user()->id;
-        $order->save();
-
-        $table = $order->table;
-        $table->state = 'free';
-        $table->save();
         return redirect()->route('home')->with(['success' => 'Order paid successfully!']);
     }
 
@@ -136,7 +153,7 @@ class OrderController extends Controller
      */
     public function changeMulti(Request $request, $id)
     {
-        $time_to     = now();
+        $time_to     = date("Y-m-d H:i:s");
         $reservation = Reservation::findOrFail($id);
         //close old reservation
         $multi = $reservation->multi;

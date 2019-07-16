@@ -9,7 +9,7 @@
       <table class="table table-striped">
             @if(count($orders) > 0)
             <thead>
-               <tr class="bg-dark text-white">
+               <tr>
                   <th>name</th>
                   <th>amount</th>
                   <th>price</th>
@@ -61,13 +61,22 @@
                @if($currentOrder->discount)
                <tr>
                   <th colspan="3">Total before discount</th>
+                  <th colspan="1">{{$currentOrder->total}} LE</th>
+               </tr>
+               <tr>
+                  <th colspan="3">Discount</th>
+                  <th colspan="1">{{$currentOrder->discount}} LE</th>
+               </tr>
+               <tr>
+                  <th colspan="3">Total paid</th>
                   <th colspan="1">{{$currentOrder->total - $currentOrder->discount}} LE</th>
                </tr>
-               @endif
+               @else 
                <tr>
                   <th colspan="3">Total paid</th>
                   <th colspan="1">{{$currentOrder->total}} LE</th>
                </tr>
+               @endif
             </tfoot>
          </table>
     </div>

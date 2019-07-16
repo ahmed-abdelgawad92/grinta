@@ -13,7 +13,7 @@ class OrderItem extends Model
     {
         return DB::select(
             '
-            SELECT order_item.id AS id, name, meals.price AS price, SUM(amount) AS amount, SUM(meals.price * amount) AS total FROM order_item 
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item 
             LEFT JOIN meals on meals.id = order_item.meal_id
             WHERE 
                 order_id = :id
@@ -26,7 +26,7 @@ class OrderItem extends Model
             GROUP BY 
                 order_item.meal_id
             UNION 
-            SELECT order_item.id AS id, name, drinks.price AS price, SUM(amount) AS amount, SUM(drinks.price * amount) AS total FROM order_item
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item
             LEFT JOIN drinks on drinks.id = order_item.drink_id
             WHERE 
                 order_id = :oid
@@ -61,5 +61,40 @@ class OrderItem extends Model
     public function meal()
     {
         return $this->belongsTo('App\Meal');
+    }
+
+    public static function getProductWithDetails($date)
+    {
+        return DB::select(
+            '
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item 
+            LEFT JOIN meals on meals.id = order_item.meal_id
+            WHERE 
+                date(order_item.created_at) = ?
+            AND 
+                order_item.meal_id IS NOT NULL
+            AND 
+                order_item.drink_id IS NULL
+            AND 
+                order_item.canceled = 0
+            GROUP BY 
+                order_item.meal_id
+            UNION 
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item
+            LEFT JOIN drinks on drinks.id = order_item.drink_id
+            WHERE 
+                date(order_item.created_at) = ?
+            AND 
+                order_item.drink_id IS NOT NULL
+            AND 
+                order_item.meal_id IS NULL
+            AND 
+                order_item.canceled = 0
+            GROUP BY 
+                order_item.drink_id
+            
+        ',
+            [$date, $date]
+        );
     }
 }

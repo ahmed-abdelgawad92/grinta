@@ -18,13 +18,16 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('js/jq/jquery-ui.min.css') }}" rel="stylesheet">
     <link href="{{ asset('js/jq/jquery-ui.theme.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('js/jq/datetimepicker/jquery.datetimepicker.min.css') }}" rel="stylesheet">
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="{{ asset('js/jq/jquery-ui.min.js') }}" defer></script>
+    <script src="{{ asset('js/jq/datetimepicker/jquery.datetimepicker.full.min.js') }}" defer></script>
     <script src="{{ asset('js/table.js') }}" defer></script>
     <script src="{{ asset('js/order.js') }}" defer></script>
     <script src="{{ asset('js/checkout.js') }}" defer></script>
     <script src="{{ asset('js/ps.js') }}" defer></script>
+    <script src="{{ asset('js/expense.js') }}" defer></script>
 
 </head>
 <body>
@@ -99,8 +102,9 @@
                             <a href="{{route('allDrink')}}" class="list-group-item list-group-item-action @if($active == 'drink') active @endif">Drinks</a>
                             <a href="{{route('createDrink')}}" class="list-group-item list-group-item-action @if($active == 'createDrink') active @endif">Add new drink</a>
                             <a href="{{route('dailyReport')}}" class="list-group-item list-group-item-action @if($active == 'dailyReport') active @endif">Daily Report</a>
-                            <a href="#" class="disabled list-group-item list-group-item-action @if($active == 'store') active @endif">Store</a>
-                            <a href="#" class="disabled list-group-item list-group-item-action @if($active == 'createStore') active @endif">Add materials to the store</a>
+                            <a href="{{route('allExpense')}}" class="list-group-item list-group-item-action @if($active == 'expense') active @endif">Daily expenses</a>
+                            <a href="{{route('createExpense')}}" class="list-group-item list-group-item-action @if($active == 'createExpense') active @endif">Add daily expense</a>
+                            <a href="{{route('userReport')}}" class="list-group-item list-group-item-action @if($active == 'userReport') active @endif">User Report</a>
                             <a href="{{route('allUser')}}" class="list-group-item list-group-item-action @if($active == 'user') active @endif">Users</a>
                             <a href="{{route('createUser')}}" class="list-group-item list-group-item-action @if($active == 'createUser') active @endif">Add new user</a>
                         </div>

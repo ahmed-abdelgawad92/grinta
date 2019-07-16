@@ -7,6 +7,9 @@ use App\Meal;
 use App\Drink;
 use App\Order;
 use Illuminate\Http\Request;
+use App\Expense;
+use App\OrderItem;
+use App\User;
 
 class HomeController extends Controller
 {
@@ -47,12 +50,22 @@ class HomeController extends Controller
         // dd($request);
         $this->authorize('auth');
         $date = $request->date ?? date('Y-m-d');
-        $orders = Order::whereDate('created_at', $date)->where('closed', 1)->get();
-        $total = Order::whereDate('created_at', $date)->where('closed', 1)->sum('total');
+        
+        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->get();
+        $totalIn = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(total - discount) as totalIn')->value('totalIn');
+        
+        $orderItems = OrderItem::getProductWithDetails($date);
+        
+        $expenses = Expense::whereDate('date', $date)->get();
+        $totalOut = Expense::whereDate('date', $date)->sum('amount');
+
         return view('order.dailyReport',[
+            'orderItems' => $orderItems,
             'orders' => $orders,
+            'expenses' => $expenses,
             'date' => $date,
-            'total' => $total,
+            'totalIn' => $totalIn,
+            'totalOut' => $totalOut,
             'active' => 'dailyReport'
         ]);
     }
@@ -64,5 +77,39 @@ class HomeController extends Controller
     {
         $this->authorize('auth');
 
+    }
+
+
+    /**
+     * monthly Report
+     */
+    public function userReport(Request $request)
+    {
+        $this->authorize('auth');
+
+        $users = User::all();
+        $user = null;
+        $orders = [];
+        $total = 0;
+        $date_from = $request->date_from;
+        $date_to = $request->date_to;
+
+        if($request->user && $date_from && $date_to){
+            $user = User::find($request->user);
+            $orders = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->get();
+            $total = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(total - discount) as totalIn')->value('totalIn');
+        }
+
+        // dd([$orders, $total]);
+
+        return view('order.userReport', [
+            'orders' => $orders,
+            'users' => $users,
+            'currentUser' => $user,
+            'total' => $total,
+            'from' => $date_from,
+            'to' => $date_to,
+            'active' => 'userReport'
+        ]);
     }
 }
