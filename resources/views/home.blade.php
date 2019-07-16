@@ -16,7 +16,7 @@
         @foreach ($tables as $table)
             <div class="col-6 col-md-4">
                 <div class="card mb-3 
-                    @if($table->state == 'busy' && $table->type == 'ps' && strtotime($table->reservations->last()->time_to) < strtotime(date('Y-m-d H:i:s'))) 
+                    @if($table->state == 'busy' && $table->type == 'ps' && $table->reservations->last()->time_to != '0000-00-00 00:00:00' && strtotime($table->reservations->last()->time_to) < strtotime(date('Y-m-d H:i:s'))) 
                     bg-secondary
                     @elseif($table->state == 'busy')
                     busy 
