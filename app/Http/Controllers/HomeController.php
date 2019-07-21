@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Expense;
 use App\OrderItem;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -51,9 +52,10 @@ class HomeController extends Controller
         $this->authorize('auth');
         $date = $request->date ?? date('Y-m-d');
         
-        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->get();
-        $totalIn = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(total - discount) as totalIn')->value('totalIn');
-        
+        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->orderBy('paid_at', 'DESC')->orderBy('updated_at', 'DESC')->get();
+        $totalIn = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
+        $totalIn -= Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
+
         $orderItems = OrderItem::getProductWithDetails($date);
         
         $expenses = Expense::whereDate('date', $date)->get();
@@ -73,10 +75,39 @@ class HomeController extends Controller
     /**
      * monthly Report
      */
-    public function monthlyReport($date = null)
+    public function rangeReport(Request $request)
     {
         $this->authorize('auth');
 
+        $date_from = $request->date_from ?? '';
+        $date_to = $request->date_to ?? '';
+        $orders = [];
+        $orderItems = [];
+        $totalIn = 0;
+        $totalOut = 0;
+        $expenses = [];
+
+        if($date_from != '' && $date_to != ''){
+            $orders = Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->orderBy('paid_at', 'DESC')->orderBy('updated_at', 'DESC')->get();
+            $totalIn = Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
+            $totalIn -= Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
+    
+            $orderItems = OrderItem::getProductWithDetailsRange($date_from, $date_to);
+    
+            $expenses = Expense::whereDate('date', '>=', $date_from)->whereDate('date', '<=', $date_to)->get();
+            $totalOut = Expense::whereDate('date', '>=', $date_from)->whereDate('date', '<=', $date_to)->sum('amount');
+        }
+
+        return view('order.rangeReport', [
+            'orderItems' => $orderItems,
+            'orders' => $orders,
+            'expenses' => $expenses,
+            'date_from' => $date_from,
+            'date_to' => $date_to,
+            'totalIn' => $totalIn,
+            'totalOut' => $totalOut,
+            'active' => 'rangeReport'
+        ]);
     }
 
 

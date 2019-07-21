@@ -211,6 +211,11 @@ Route::group(['prefix' => 'report'], function () {
         'uses' => 'HomeController@dailyReport',
         'as'   => 'dailyReport'
     ]);
+    //get range report
+    Route::get('/range', [
+        'uses' => 'HomeController@rangeReport',
+        'as'   => 'rangeReport'
+    ]);
     //get user report
     Route::get('/user', [
         'uses' => 'HomeController@userReport',

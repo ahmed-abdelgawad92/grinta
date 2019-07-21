@@ -56,7 +56,7 @@ class OrderController extends Controller
             
             $order = new Order;
             $order->table_id = $id;
-            $order->user_id = Auth::user()->id;
+            // $order->user_id = Auth::user()->id;
             $order->save();
     
             if($table->type == 'ps'){

@@ -144,6 +144,11 @@ $(document).ready(function () {
       format: 'Y-m-d H:i',
       step: 10
    }).attr('readonly', 'readonly');
+   //range report 
+   $('.datepicker_range').datetimepicker({
+      format: 'Y-m-d',
+      timepicker: false
+   }).attr('readonly', 'readonly');
 
    //calculate time 
    $('[data-busy-table]').each(function(i, el){

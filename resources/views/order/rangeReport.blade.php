@@ -3,16 +3,23 @@
 @section('content')
 <div class="card-header">
    <div class="row">
-      <div class="col-9">
-         Order Report at {{date('d/m/Y', strtotime($date))}}
+      <div class="col-6">
+         @if($date_from != '' && $date_to != '')
+         Order Report from {{date('d/m/Y', strtotime($date_from))}} to {{date('d/m/Y', strtotime($date_to))}} 
+         @else 
+         Enter dates and generate a report
+         @endif
       </div>
-      <div class="col-3">
-         <form action="{{route('dailyReport')}}" method="GET">
-            <div class="input-group">
-               <input class="form-control" name="date" id="datepicker" type="date" placeholder="enter date">
+      <div class="col-6">
+         <form action="{{route('rangeReport')}}" method="GET"  class="form-inline" style="flex-flow: row-reverse">
+            <div class="input-group mr-3">
+               <input class="form-control datepicker_range" name="date_to" value="{{$date_to}}" placeholder="enter date & time to">
                <div class="input-group-append">
                   <button type="submit" class="btn btn-primary">go</button>
                </div>
+            </div>
+            <div class="input-group mr-2">
+               <input class="form-control datepicker_range" name="date_from" value="{{$date_from}}" placeholder="enter date & time from">
             </div>
             @csrf
          </form>

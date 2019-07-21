@@ -97,4 +97,44 @@ class OrderItem extends Model
             [$date, $date]
         );
     }
+
+
+    public static function getProductWithDetailsRange($from, $to)
+    {
+        return DB::select(
+            '
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item 
+            LEFT JOIN meals on meals.id = order_item.meal_id
+            WHERE 
+                date(order_item.created_at) >= date(:from)
+            AND 
+                date(order_item.created_at) <= date(:to)
+            AND 
+                order_item.meal_id IS NOT NULL
+            AND 
+                order_item.drink_id IS NULL
+            AND 
+                order_item.canceled = 0
+            GROUP BY 
+                order_item.meal_id
+            UNION 
+            SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item
+            LEFT JOIN drinks on drinks.id = order_item.drink_id
+            WHERE 
+                date(order_item.created_at) >= date(:from_f)
+            AND 
+                date(order_item.created_at) <= date(:to_to)
+            AND 
+                order_item.drink_id IS NOT NULL
+            AND 
+                order_item.meal_id IS NULL
+            AND 
+                order_item.canceled = 0
+            GROUP BY 
+                order_item.drink_id
+            
+        ',
+            [ 'from' => $from, 'to' => $to, 'from_f' => $from, 'to_to' => $to]
+        );
+    }
 }

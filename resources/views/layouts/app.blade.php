@@ -102,6 +102,7 @@
                             <a href="{{route('allDrink')}}" class="list-group-item list-group-item-action @if($active == 'drink') active @endif">Drinks</a>
                             <a href="{{route('createDrink')}}" class="list-group-item list-group-item-action @if($active == 'createDrink') active @endif">Add new drink</a>
                             <a href="{{route('dailyReport')}}" class="list-group-item list-group-item-action @if($active == 'dailyReport') active @endif">Daily Report</a>
+                            <a href="{{route('rangeReport')}}" class="list-group-item list-group-item-action @if($active == 'rangeReport') active @endif">Range Report</a>
                             <a href="{{route('allExpense')}}" class="list-group-item list-group-item-action @if($active == 'expense') active @endif">Daily expenses</a>
                             <a href="{{route('createExpense')}}" class="list-group-item list-group-item-action @if($active == 'createExpense') active @endif">Add daily expense</a>
                             <a href="{{route('userReport')}}" class="list-group-item list-group-item-action @if($active == 'userReport') active @endif">User Report</a>
