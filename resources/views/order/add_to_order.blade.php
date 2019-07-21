@@ -2,7 +2,7 @@
    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
       <div class="modal-content">
          <div class="modal-header">
-            <h5 class="modal-title">Add item to the order</h5>
+            <h5 class="modal-title"><span class="table_name" style="font-weight: 800; font-size: 22px;">Table</span> - Add item to the order</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
             </button>
@@ -39,7 +39,7 @@
                   </div>
                </div>
                <div class="col-7">
-                  <h5 class="text-center">Order</h5>
+                  <h5 class="text-center" style="margin-top: 150px;">Order</h5>
                   <div class="alert alert-success" style="display: none;" id="success">
                      Order is successfully created!
                   </div>

@@ -44,7 +44,7 @@
                                     <button type="button" data-id="{{$reservation->id}}" class="change_multi btn btn-dark mb-2" data-url="{{route('changeMulti', $reservation)}}" data-toggle="modal" data-target="#change-ps-modal">change to multi</button>
                                 @endif
                             @endif    
-                            <button class="btn btn-primary open_order_modal mb-2" data-toggle="modal" data-order-id="{{$table->currentOrder()->id ?? null}}" data-target="#add_to_order">order</button>
+                            <button class="btn btn-primary open_order_modal mb-2" data-toggle="modal" data-order-id="{{$table->currentOrder()->id ?? null}}" data-target="#add_to_order" data-table="{{$table->name}}">order</button>
                             <a class="btn btn-success mb-2" href="{{route('checkout', $table->currentOrder()->id)}}">checkout</a>
                         @elseif($table->type == 'ps')
                             <button class="btn btn-primary open_ps mb-2" data-toggle="modal" data-url="/orders/create/{{$table->id}}" data-target="#add-ps-modal">New Order</button>

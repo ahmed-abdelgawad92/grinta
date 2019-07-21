@@ -28,6 +28,7 @@ var order = [];
 $(document).ready(function () {
    $('.open_order_modal').click(function () {
       $('#submitOrder').attr('data-order-id', $(this).attr('data-order-id'));
+      $('.modal-title .table_name').html($(this).attr('data-table'));
    });
 
    $('#order').hide();

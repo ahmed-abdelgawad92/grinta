@@ -52,7 +52,7 @@ class HomeController extends Controller
         $this->authorize('auth');
         $date = $request->date ?? date('Y-m-d');
         
-        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->orderBy('paid_at', 'DESC')->orderBy('updated_at', 'DESC')->get();
+        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->orderBy('paid_at', 'ASC')->orderBy('updated_at', 'ASC')->get();
         $totalIn = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
         $totalIn -= Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
 
@@ -88,7 +88,7 @@ class HomeController extends Controller
         $expenses = [];
 
         if($date_from != '' && $date_to != ''){
-            $orders = Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->orderBy('paid_at', 'DESC')->orderBy('updated_at', 'DESC')->get();
+            $orders = Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->orderBy('paid_at', 'ASC')->orderBy('updated_at', 'ASC')->get();
             $totalIn = Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
             $totalIn -= Order::whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
     
@@ -127,8 +127,9 @@ class HomeController extends Controller
 
         if($request->user && $date_from && $date_to){
             $user = User::find($request->user);
-            $orders = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->get();
-            $total = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(total - discount) as totalIn')->value('totalIn');
+            $orders = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->orderBy('paid_at', 'ASC')->get();
+            $total = Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
+            $total -= Order::where('user_id', $user->id)->where('created_at', '>=', $date_from)->where('created_at', '<=', $date_to)->where('table_id', '!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
         }
 
         // dd([$orders, $total]);

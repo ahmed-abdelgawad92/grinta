@@ -3,7 +3,7 @@
 @section('content')
 <div class="card-content">
    <div class="card-header">
-      <h5 class="card-title">Checkout</h5>
+      <h5 class="card-title"><span style="font-weight: 800; font-size: 22px;">{{$table->name}}</span> - Checkout</h5>
    </div>
    <form action="{{route('pay', $id)}}" method="POST" id="checkout_form" onkeydown="return event.key != 'Enter';">
    <div class="card-body">
