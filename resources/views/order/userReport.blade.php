@@ -35,7 +35,7 @@
       @if(count($orders) > 0)
       <div class="jumbotron">
          <h1 class="display-4 text-center">Total: {{$total}} LE</h1>
-         <h3 class="text-center">Order reports from <b>"{{date('H:i a - d/m/Y', strtotime($from))}}"</b> to <b>"{{date('H:i a - d/m/Y', strtotime($to))}}"</b></h3>
+         <h3 class="text-center">Order reports from <b>"{{date('h:i a - d/m/Y', strtotime($from))}}"</b> to <b>"{{date('h:i a - d/m/Y', strtotime($to))}}"</b></h3>
       </div>
       <table class="table table-striped">
          <thead>
@@ -63,7 +63,7 @@
                </td>
                <td>{{$order->total}} LE</td>
                <td>{{$order->total - $order->discount}} LE</td>
-               <td>{{date('H:i a - d/m/Y', strtotime($order->created_at))}}</td>
+               <td>{{date('h:i a - d/m/Y', strtotime($order->created_at))}}</td>
                <td>
                   <a href="{{route('showOrderItem', ['id' => $order->id])}}" class="btn btn-primary">details</a>
                </td>

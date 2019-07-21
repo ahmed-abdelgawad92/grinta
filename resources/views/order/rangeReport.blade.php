@@ -84,8 +84,8 @@
                      </td>
                      <td>{{$order->total}} LE</td>
                      <td>{{$order->total - $order->discount}} LE</td>
-                     <td>{{date('H:i a - d/m/Y', strtotime($order->paid_at))}}</td>
-                     <td>{{date('H:i a - d/m/Y', strtotime($order->created_at))}}</td>
+                     <td>{{date('h:i a - d/m/Y', strtotime($order->paid_at))}}</td>
+                     <td>{{date('h:i a - d/m/Y', strtotime($order->created_at))}}</td>
                      <td>{{$order->user->name??'N/A'}}</td>
                      <td>
                         <a href="{{route('showOrderItem', ['id' => $order->id])}}" class="btn btn-primary">details</a>
