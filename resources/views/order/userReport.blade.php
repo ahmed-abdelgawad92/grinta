@@ -20,7 +20,7 @@
             <div class="input-group mr-2">
                <select name="user" class="form-control">
                   @foreach ($users as $user)
-                  <option value="{{$user->id}}">{{$user->name}}</option>    
+                  <option @if(isset($currentUser) && $currentUser->id == $user->id) selected @endif value="{{$user->id}}">{{$user->name}}</option>    
                   @endforeach
                </select>
             </div>
