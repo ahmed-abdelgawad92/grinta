@@ -132,6 +132,7 @@ class OrderController extends Controller
             if($request->discount){
                 $order->discount = $request->discount;
             }
+            $order->paid_at = date("Y-m-d H:i:s");
             $order->closed = 1;
             $order->total = $total;
             $order->user_id = Auth::user()->id;

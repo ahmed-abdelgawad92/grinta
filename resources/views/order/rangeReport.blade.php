@@ -13,13 +13,13 @@
       <div class="col-6">
          <form action="{{route('rangeReport')}}" method="GET"  class="form-inline" style="flex-flow: row-reverse">
             <div class="input-group mr-3">
-               <input class="form-control datepicker_range" name="date_to" value="{{$date_to}}" placeholder="enter date & time to">
+               <input class="form-control datepicker_range" name="date_to" value="{{$date_to}}" placeholder="enter date to">
                <div class="input-group-append">
                   <button type="submit" class="btn btn-primary">go</button>
                </div>
             </div>
             <div class="input-group mr-2">
-               <input class="form-control datepicker_range" name="date_from" value="{{$date_from}}" placeholder="enter date & time from">
+               <input class="form-control datepicker_range" name="date_from" value="{{$date_from}}" placeholder="enter date from">
             </div>
             @csrf
          </form>
