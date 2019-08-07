@@ -75,7 +75,7 @@
                   @foreach($orders as $order)
                   <tr>
                      <td>{{$count++}}</td>
-                     <td>{{$order->table->name}}</td>
+                     <td>{{$order->table->name ?? 'Table Deleted'}}</td>
                      <td>
                         {{$order->discount??'N/A'}}
                         @if($order->discount)
