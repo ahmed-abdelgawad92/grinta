@@ -45,6 +45,9 @@
          <li class="nav-item">
             <a class="nav-link" id="sales-tab" data-toggle="tab" href="#sales" role="tab" aria-controls="sales" aria-selected="false">sales</a>
          </li>
+         <li class="nav-item">
+            <a class="nav-link" id="sales-tab" data-toggle="tab" href="#ps" role="tab" aria-controls="ps" aria-selected="false">PS</a>
+         </li>
       </ul>
       <div class="tab-content" id="myTabContent">
          <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="orders-tab">
@@ -167,6 +170,7 @@
          </div>
          <div class="tab-pane fade" id="sales" role="tabpanel" aria-labelledby="sales-tab">
             @if(count($orderItems) > 0)
+            <h3 class="text-center p-4">Total {{$items_total}} LE</h3>
             <table class="table table-striped">
                <thead>
                   <tr>
@@ -182,10 +186,10 @@
                   <tr>
                      <td>{{$orderItem->name}}</td>
                      <td>{{$orderItem->amount}}</td>
-                     <td>{{$orderItem->price}}</td>
-                     <td>{{$orderItem->total}}</td>
+                     <td>{{$orderItem->price}} LE</td>
+                     <td>{{$orderItem->total}} LE</td>
                      <td>
-                        <button type="button" class="btn btn-danger delete-order-item" data-id="{{$order->id}}" data-toggle="modal" data-target="#delete-order-item">&#9003;</button>
+                        <button type="button" class="btn btn-danger delete-order-item" data-id="{{$orderItem->id}}" data-toggle="modal" data-target="#delete-order-item">&#9003;</button>
                      </td>
                   </tr>    
                   @endforeach
@@ -213,6 +217,47 @@
             </div>
             @else 
                <div class="alert alert-warning my-3">There are no Sales</div>
+            @endif
+         </div>
+         <div class="tab-pane fade" id="ps" role="tabpanel" aria-labelledby="ps-tab">
+            @if(count($reservations) > 0)
+            @php
+               $count = 1;
+            @endphp
+            <h3 class="text-center p-4">Total {{$total_ps}} LE</h3>
+            <table class="table table-striped">
+               <thead>
+                  <tr>
+                     <th>#</th>
+                     <th>table</th>
+                     <th>time from</th>
+                     <th>time to</th>
+                     <th>multi</th>
+                     <th>price / hour</th>
+                     <th>total price</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  @foreach($reservations as $reservation)
+                     @php                        
+                        $from  = strtotime($reservation->time_from);
+                        $to    = strtotime($reservation->time_to);
+                        $price = round((($to - $from) / 3600) * $reservation->price);
+                     @endphp
+                  <tr>
+                     <td>{{$count++}}</td>
+                     <td>{{$reservation->table_name}}</td>
+                     <td>{{$reservation->time_from}}</td>
+                     <td>{{$reservation->time_to}}</td>
+                     <td>{{$reservation->multi ? 'yes' : 'no'}}</td>
+                     <td>{{$reservation->price}} LE</td>
+                     <td>{{$price}} LE</td>
+                  </tr>    
+                  @endforeach
+               </tbody>
+            </table>
+            @else 
+               <div class="alert alert-warning my-3">There are no PS reservations</div>
             @endif
          </div>
       </div>

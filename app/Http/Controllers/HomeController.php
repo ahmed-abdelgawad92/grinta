@@ -9,6 +9,7 @@ use App\Order;
 use Illuminate\Http\Request;
 use App\Expense;
 use App\OrderItem;
+use App\Reservation;
 use App\User;
 use Illuminate\Support\Facades\DB;
 
@@ -52,18 +53,30 @@ class HomeController extends Controller
         $this->authorize('auth');
         $date = $request->date ?? date('Y-m-d');
         
-        $orders = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->orderBy('paid_at', 'ASC')->orderBy('updated_at', 'ASC')->get();
-        $totalIn = Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
-        $totalIn -= Order::whereDate('created_at', $date)->where('table_id','!=', 22)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
+        // $reservations = Reservation::whereDate('created_at', $date)->where('time_to','!=', null )->orderBy('updated_at', 'ASC')->get();
+        $reservations = Reservation::getWhereOrderIsClosed($date);
+        $total_ps     = Reservation::getTotalWhereOrderIsClosed($date);
+        
+        $orders   = Order::whereDate('created_at', $date)->where('closed', 1)->orderBy('paid_at', 'ASC')->orderBy('updated_at', 'ASC')->get();
+        $totalIn  = Order::whereDate('created_at', $date)->where('closed', 1)->selectRaw('SUM(total) as totalIn')->value('totalIn');
+        $totalIn -= Order::whereDate('created_at', $date)->where('closed', 1)->selectRaw('SUM(discount) as discount')->value('discount');
 
-        $orderItems = OrderItem::getProductWithDetails($date);
+        $orderItems  = OrderItem::getProductWithDetails($date);
+        $items_total = 0;
+        
+        foreach($orderItems as $item) {
+            $items_total += $item->total;
+        }
         
         $expenses = Expense::whereDate('date', $date)->get();
         $totalOut = Expense::whereDate('date', $date)->sum('amount');
 
         return view('order.dailyReport',[
             'orderItems' => $orderItems,
+            'items_total' => $items_total,
             'orders' => $orders,
+            'reservations' => $reservations,
+            'total_ps' => $total_ps,
             'expenses' => $expenses,
             'date' => $date,
             'totalIn' => $totalIn,

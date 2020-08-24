@@ -69,8 +69,9 @@ class OrderItem extends Model
             '
             SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item 
             LEFT JOIN meals on meals.id = order_item.meal_id
+            INNER JOIN orders ON order_item.order_id = orders.id AND orders.closed = 1
             WHERE 
-                date(order_item.created_at) = ?
+                date(orders.created_at) = ?
             AND 
                 order_item.meal_id IS NOT NULL
             AND 
@@ -82,8 +83,9 @@ class OrderItem extends Model
             UNION 
             SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item
             LEFT JOIN drinks on drinks.id = order_item.drink_id
+            INNER JOIN orders ON order_item.order_id = orders.id AND orders.closed = 1
             WHERE 
-                date(order_item.created_at) = ?
+                date(orders.created_at) = ?
             AND 
                 order_item.drink_id IS NOT NULL
             AND 
@@ -105,10 +107,11 @@ class OrderItem extends Model
             '
             SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item 
             LEFT JOIN meals on meals.id = order_item.meal_id
+            INNER JOIN orders ON order_item.order_id = orders.id AND orders.closed = 1
             WHERE 
-                date(order_item.created_at) >= date(:from)
+                date(orders.created_at) >= date(:from)
             AND 
-                date(order_item.created_at) <= date(:to)
+                date(orders.created_at) <= date(:to)
             AND 
                 order_item.meal_id IS NOT NULL
             AND 
@@ -120,10 +123,11 @@ class OrderItem extends Model
             UNION 
             SELECT order_item.id AS id, name, order_item.price AS price, SUM(amount) AS amount, SUM(order_item.price * amount) AS total FROM order_item
             LEFT JOIN drinks on drinks.id = order_item.drink_id
+            INNER JOIN orders ON order_item.order_id = orders.id AND orders.closed = 1
             WHERE 
-                date(order_item.created_at) >= date(:from_f)
+                date(orders.created_at) >= date(:from_f)
             AND 
-                date(order_item.created_at) <= date(:to_to)
+                date(orders.created_at) <= date(:to_to)
             AND 
                 order_item.drink_id IS NOT NULL
             AND 

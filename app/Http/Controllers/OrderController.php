@@ -156,6 +156,8 @@ class OrderController extends Controller
     {
         $time_to     = date("Y-m-d H:i:s");
         $reservation = Reservation::findOrFail($id);
+        $order       = $reservation->order;
+        $table       = $order->table;
         //close old reservation
         $multi = $reservation->multi;
         $reservation->time_to = $time_to;
@@ -164,8 +166,13 @@ class OrderController extends Controller
         $newReservation = new Reservation;
         $newReservation->order_id = $reservation->order_id;
         $newReservation->time_from = $time_to;
-        $newReservation->price = $reservation->price;
         $newReservation->multi = ! $multi;
+
+        if($newReservation->multi) {
+            $newReservation->price = $table->ps_multi_price;
+        } else {
+            $newReservation->price = $table->ps_price;
+        }
         $newReservation->save();
 
         $multi_text = $multi ? 'Single' : 'Multi';
